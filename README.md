@@ -223,5 +223,6 @@ All educational resources linked in this application remain the property of thei
 📞 Support
  • Issues: GitHub Issues
  • Email: support.LearnSmartAI@gmail.com
- • Twitter: @LearnSmartAI
+ • Twitter: @LearnSmartAI_gl
+ 
 
