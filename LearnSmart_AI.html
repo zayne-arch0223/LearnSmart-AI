@@ -1,0 +1,1099 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Study Buddy - High School Learning Resource Finder</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <style>
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+        h1, h2, h3, .brand-font {
+            font-family: 'Space Grotesk', sans-serif;
+        }
+        .gradient-text {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .card-hover {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .card-hover:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.3);
+        }
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .search-glow:focus {
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.3);
+        }
+        .tag-pop {
+            animation: popIn 0.3s ease-out;
+        }
+        @keyframes popIn {
+            0% { transform: scale(0); opacity: 0; }
+            80% { transform: scale(1.1); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .floating {
+            animation: float 6s ease-in-out infinite;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+        .gradient-bg {
+            background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+            background-size: 400% 400%;
+            animation: gradient 15s ease infinite;
+        }
+        @keyframes gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        .resource-card {
+            background: linear-gradient(145deg, #ffffff 0%, #f3f4f6 100%);
+            border: 1px solid rgba(229, 231, 235, 0.5);
+        }
+        .dark .resource-card {
+            background: linear-gradient(145deg, #1f2937 0%, #111827 100%);
+            border: 1px solid rgba(75, 85, 99, 0.5);
+        }
+        .typewriter {
+            overflow: hidden;
+            border-right: 3px solid #667eea;
+            white-space: nowrap;
+            animation: typing 3.5s steps(40, end), blink-caret 0.75s step-end infinite;
+        }
+        @keyframes typing {
+            from { width: 0 }
+            to { width: 100% }
+        }
+        @keyframes blink-caret {
+            from, to { border-color: transparent }
+            50% { border-color: #667eea; }
+        }
+        .pulse-ring {
+            position: absolute;
+            border-radius: 50%;
+            animation: pulse-ring 2s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+        }
+        @keyframes pulse-ring {
+            0% { transform: scale(0.33); opacity: 1; }
+            80%, 100% { transform: scale(2); opacity: 0; }
+        }
+        .smooth-scroll {
+            scroll-behavior: smooth;
+        }
+        .filter-btn.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            transform: scale(1.05);
+        }
+        .star-rating {
+            color: #fbbf24;
+        }
+        .difficulty-easy { color: #10b981; }
+        .difficulty-medium { color: #f59e0b; }
+        .difficulty-hard { color: #ef4444; }
+    </style>
+</head>
+<body class="bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white transition-colors duration-300 smooth-scroll">
+    
+    <!-- Navigation -->
+    <nav class="fixed w-full z-50 glass-effect border-b border-gray-200 dark:border-gray-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center space-x-2 cursor-pointer" onclick="window.scrollTo(0,0)">
+                    <div class="w-8 h-8 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center text-white font-bold text-lg">L</div>
+                    <span class="brand-font text-xl font-bold gradient-text">LearnSmart AI</span>
+                </div>
+                <div class="hidden md:flex space-x-8">
+                    <a href="#features" class="text-sm font-medium hover:text-indigo-600 transition-colors">Features</a>
+                    <a href="#resources" class="text-sm font-medium hover:text-indigo-600 transition-colors">Resources</a>
+                    <a href="#subjects" class="text-sm font-medium hover:text-indigo-600 transition-colors">Subjects</a>
+                    <button onclick="toggleTheme()" class="p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-800 transition-colors">
+                        <svg class="w-5 h-5 hidden dark:block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                        <svg class="w-5 h-5 block dark:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="relative min-h-screen flex items-center justify-center pt-16 overflow-hidden">
+        <div class="absolute inset-0 gradient-bg opacity-10"></div>
+        <div class="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg%20width%3D%2260%22%20height%3D%2260%22%20viewBox%3D%220%200%2060%2060%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Cg%20fill%3D%22none%22%20fill-rule%3D%22evenodd%22%3E%3Cg%20fill%3D%22%239C92AC%22%20fill-opacity%3D%220.05%22%3E%3Cpath%20d%3D%22M36%2034v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6%2034v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6%204V0H4v4H0v2h4v4h2V6h4V4H6z%22/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-20"></div>
+        
+        <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <div class="inline-flex items-center px-4 py-2 rounded-full bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 text-sm font-medium mb-6 tag-pop">
+                <span class="flex h-2 w-2 rounded-full bg-indigo-600 mr-2 animate-pulse"></span>
+                AI-Powered Learning Assistant
+            </div>
+            
+            <h1 class="text-5xl md:text-7xl font-bold mb-6 leading-tight">
+                Find Your Perfect <br>
+                <span class="gradient-text typewriter inline-block">Learning Resources</span>
+            </h1>
+            
+            <p class="text-xl md:text-2xl text-gray-600 dark:text-gray-300 mb-10 max-w-3xl mx-auto leading-relaxed">
+                Discover curated textbooks, video lessons, and interactive tools tailored to your learning style, grade level, and subjects.
+            </p>
+
+            <!-- Smart Search Bar -->
+            <div class="max-w-2xl mx-auto relative group">
+                <div class="absolute -inset-1 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-2xl blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200"></div>
+                <div class="relative flex items-center bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-2">
+                    <svg class="w-6 h-6 text-gray-400 ml-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                    <input type="text" id="mainSearch" placeholder="Search for 'AP Calculus', 'Biology textbooks', 'Python coding'..." 
+                           class="w-full px-4 py-3 bg-transparent border-none focus:outline-none text-lg search-glow rounded-xl"
+                           onkeyup="handleSearch(event)">
+                    <button onclick="performSearch()" class="px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl font-semibold hover:shadow-lg transform hover:scale-105 transition-all">
+                        Search
+                    </button>
+                </div>
+            </div>
+
+            <!-- Quick Stats -->
+            <div class="mt-12 grid grid-cols-2 md:grid-cols-4 gap-6 max-w-4xl mx-auto">
+                <div class="glass-effect rounded-2xl p-4 floating" style="animation-delay: 0s;">
+                    <div class="text-3xl font-bold text-indigo-600">500+</div>
+                    <div class="text-sm text-gray-600 dark:text-gray-400">Resources</div>
+                </div>
+                <div class="glass-effect rounded-2xl p-4 floating" style="animation-delay: 0.5s;">
+                    <div class="text-3xl font-bold text-purple-600">15+</div>
+                    <div class="text-sm text-gray-600 dark:text-gray-400">Subjects</div>
+                </div>
+                <div class="glass-effect rounded-2xl p-4 floating" style="animation-delay: 1s;">
+                    <div class="text-3xl font-bold text-pink-600">100%</div>
+                    <div class="text-sm text-gray-600 dark:text-gray-400">Free Access</div>
+                </div>
+                <div class="glass-effect rounded-2xl p-4 floating" style="animation-delay: 1.5s;">
+                    <div class="text-3xl font-bold text-blue-600">4.8★</div>
+                    <div class="text-sm text-gray-600 dark:text-gray-400">User Rating</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- AI Recommendation Engine -->
+    <section id="features" class="py-20 bg-white dark:bg-gray-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl font-bold mb-4">Smart Learning Matches</h2>
+                <p class="text-gray-600 dark:text-gray-300">Tell us what you need, and our AI will find the perfect resources</p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8 mb-12">
+                <!-- Grade Level Selector -->
+                <div class="bg-gray-50 dark:bg-gray-700 rounded-2xl p-6 border-2 border-transparent hover:border-indigo-500 transition-all cursor-pointer" onclick="selectGrade('9-10')" id="grade-9-10">
+                    <div class="w-12 h-12 bg-blue-100 dark:bg-blue-900 rounded-xl flex items-center justify-center mb-4 text-2xl">🎒</div>
+                    <h3 class="text-xl font-bold mb-2">Grades 9-10</h3>
+                    <p class="text-gray-600 dark:text-gray-400 text-sm">Foundation courses, Algebra, Biology, World History</p>
+                </div>
+                <div class="bg-gray-50 dark:bg-gray-700 rounded-2xl p-6 border-2 border-transparent hover:border-indigo-500 transition-all cursor-pointer" onclick="selectGrade('11-12')" id="grade-11-12">
+                    <div class="w-12 h-12 bg-purple-100 dark:bg-purple-900 rounded-xl flex items-center justify-center mb-4 text-2xl">🎓</div>
+                    <h3 class="text-xl font-bold mb-2">Grades 11-12</h3>
+                    <p class="text-gray-600 dark:text-gray-400 text-sm">AP Courses, SAT Prep, Calculus, Advanced Sciences</p>
+                </div>
+                <div class="bg-gray-50 dark:bg-gray-700 rounded-2xl p-6 border-2 border-transparent hover:border-indigo-500 transition-all cursor-pointer" onclick="selectGrade('test-prep')" id="grade-test">
+                    <div class="w-12 h-12 bg-green-100 dark:bg-green-900 rounded-xl flex items-center justify-center mb-4 text-2xl">📝</div>
+                    <h3 class="text-xl font-bold mb-2">Test Prep</h3>
+                    <p class="text-gray-600 dark:text-gray-400 text-sm">SAT, ACT, AP Exams, College Admissions</p>
+                </div>
+            </div>
+
+            <!-- Learning Style Preferences -->
+            <div class="bg-gradient-to-r from-indigo-50 to-purple-50 dark:from-gray-700 dark:to-gray-800 rounded-3xl p-8 mb-12">
+                <h3 class="text-2xl font-bold mb-6 text-center">What's your learning style?</h3>
+                <div class="flex flex-wrap justify-center gap-4">
+                    <button onclick="filterByStyle('visual')" class="px-6 py-3 rounded-full bg-white dark:bg-gray-800 shadow-md hover:shadow-lg transform hover:scale-105 transition-all flex items-center gap-2" id="style-visual">
+                        <span>🎥</span> Visual Learner
+                    </button>
+                    <button onclick="filterByStyle('reading')" class="px-6 py-3 rounded-full bg-white dark:bg-gray-800 shadow-md hover:shadow-lg transform hover:scale-105 transition-all flex items-center gap-2" id="style-reading">
+                        <span>📚</span> Reading/Writing
+                    </button>
+                    <button onclick="filterByStyle('interactive')" class="px-6 py-3 rounded-full bg-white dark:bg-gray-800 shadow-md hover:shadow-lg transform hover:scale-105 transition-all flex items-center gap-2" id="style-interactive">
+                        <span>🎮</span> Interactive/Hands-on
+                    </button>
+                    <button onclick="filterByStyle('auditory')" class="px-6 py-3 rounded-full bg-white dark:bg-gray-800 shadow-md hover:shadow-lg transform hover:scale-105 transition-all flex items-center gap-2" id="style-auditory">
+                        <span>🎧</span> Auditory Learner
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Subject Categories -->
+    <section id="subjects" class="py-20 bg-gray-50 dark:bg-gray-900">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-4xl font-bold text-center mb-12">Browse by Subject</h2>
+            
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
+                <button onclick="filterBySubject('mathematics')" class="subject-btn p-6 rounded-2xl bg-white dark:bg-gray-800 shadow-lg hover:shadow-2xl transition-all transform hover:-translate-y-2 text-center group" data-subject="mathematics">
+                    <div class="text-4xl mb-3 group-hover:scale-110 transition-transform">📐</div>
+                    <div class="font-semibold">Mathematics</div>
+                    <div class="text-xs text-gray-500 mt-1">Algebra to Calculus</div>
+                </button>
+                <button onclick="filterBySubject('science')" class="subject-btn p-6 rounded-2xl bg-white dark:bg-gray-800 shadow-lg hover:shadow-2xl transition-all transform hover:-translate-y-2 text-center group" data-subject="science">
+                    <div class="text-4xl mb-3 group-hover:scale-110 transition-transform">🔬</div>
+                    <div class="font-semibold">Science</div>
+                    <div class="text-xs text-gray-500 mt-1">Life Science, Chemistry, Physics</div>
+                </button>
+                <button onclick="filterBySubject('humanities')" class="subject-btn p-6 rounded-2xl bg-white dark:bg-gray-800 shadow-lg hover:shadow-2xl transition-all transform hover:-translate-y-2 text-center group" data-subject="humanities">
+                    <div class="text-4xl mb-3 group-hover:scale-110 transition-transform">📜</div>
+                    <div class="font-semibold">Humanities</div>
+                    <div class="text-xs text-gray-500 mt-1">History, Lit, Civics</div>
+                </button>
+                <button onclick="filterBySubject('languages')" class="subject-btn p-6 rounded-2xl bg-white dark:bg-gray-800 shadow-lg hover:shadow-2xl transition-all transform hover:-translate-y-2 text-center group" data-subject="languages">
+                    <div class="text-4xl mb-3 group-hover:scale-110 transition-transform">🌍</div>
+                    <div class="font-semibold">Languages</div>
+                    <div class="text-xs text-gray-500 mt-1">Spanish, French, etc.</div>
+                </button>
+                <button onclick="filterBySubject('coding')" class="subject-btn p-6 rounded-2xl bg-white dark:bg-gray-800 shadow-lg hover:shadow-2xl transition-all transform hover:-translate-y-2 text-center group" data-subject="coding">
+                    <div class="text-4xl mb-3 group-hover:scale-110 transition-transform">💻</div>
+                    <div class="font-semibold">Computer Science</div>
+                    <div class="text-xs text-gray-500 mt-1">Python, Java, Web</div>
+                </button>
+                <button onclick="filterBySubject('arts')" class="subject-btn p-6 rounded-2xl bg-white dark:bg-gray-800 shadow-lg hover:shadow-2xl transition-all transform hover:-translate-y-2 text-center group" data-subject="arts">
+                    <div class="text-4xl mb-3 group-hover:scale-110 transition-transform">🎨</div>
+                    <div class="font-semibold">Arts & Music</div>
+                    <div class="text-xs text-gray-500 mt-1">Visual, Performing</div>
+                </button>
+                <button onclick="filterBySubject('test-prep')" class="subject-btn p-6 rounded-2xl bg-white dark:bg-gray-800 shadow-lg hover:shadow-2xl transition-all transform hover:-translate-y-2 text-center group" data-subject="test-prep">
+                    <div class="text-4xl mb-3 group-hover:scale-110 transition-transform">✅</div>
+                    <div class="font-semibold">Test Prep</div>
+                    <div class="text-xs text-gray-500 mt-1">SAT, ACT, AP</div>
+                </button>
+                <button onclick="filterBySubject('life-skills')" class="subject-btn p-6 rounded-2xl bg-white dark:bg-gray-800 shadow-lg hover:shadow-2xl transition-all transform hover:-translate-y-2 text-center group" data-subject="life-skills">
+                    <div class="text-4xl mb-3 group-hover:scale-110 transition-transform">🌱</div>
+                    <div class="font-semibold">Life Skills</div>
+                    <div class="text-xs text-gray-500 mt-1">Finance, Health</div>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Resource Results Section -->
+    <section id="resources" class="py-20 bg-white dark:bg-gray-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
+                <h2 class="text-3xl font-bold">Recommended Resources</h2>
+                
+                <!-- Filter Tabs -->
+                <div class="flex flex-wrap gap-2 bg-gray-100 dark:bg-gray-700 p-2 rounded-xl">
+                    <button onclick="filterByType('all')" class="filter-btn active px-4 py-2 rounded-lg text-sm font-medium transition-all" data-filter="all">All</button>
+                    <button onclick="filterByType('video')" class="filter-btn px-4 py-2 rounded-lg text-sm font-medium transition-all" data-filter="video">🎥 Videos</button>
+                    <button onclick="filterByType('textbook')" class="filter-btn px-4 py-2 rounded-lg text-sm font-medium transition-all" data-filter="textbook">📚 Textbooks</button>
+                    <button onclick="filterByType('interactive')" class="filter-btn px-4 py-2 rounded-lg text-sm font-medium transition-all" data-filter="interactive">🎮 Interactive</button>
+                    <button onclick="filterByType('notes')" class="filter-btn px-4 py-2 rounded-lg text-sm font-medium transition-all" data-filter="notes">📝 Notes</button>
+                </div>
+            </div>
+
+            <!-- Active Filters Display -->
+            <div id="activeFilters" class="flex flex-wrap gap-2 mb-6 hidden">
+                <span class="text-sm text-gray-500 mr-2">Active filters:</span>
+            </div>
+
+            <!-- Resources Grid -->
+            <div id="resourcesGrid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Resources will be populated by JavaScript -->
+            </div>
+
+            <!-- Load More -->
+            <div class="text-center mt-12">
+                <button onclick="loadMore()" class="px-8 py-4 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-full font-semibold transition-all transform hover:scale-105">
+                    Load More Resources
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Study Planner Tool -->
+    <section class="py-20 bg-gradient-to-br from-indigo-600 to-purple-700 text-white">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h2 class="text-4xl font-bold mb-6">AI Study Schedule Generator</h2>
+            <p class="text-xl mb-8 opacity-90">Enter your subjects and exam dates, and we'll create a personalized study plan</p>
+            
+            <div class="bg-white/10 backdrop-blur-lg rounded-3xl p-8 border border-white/20">
+                <div class="grid md:grid-cols-2 gap-4 mb-6">
+                    <input type="text" placeholder="Subject (e.g., AP Biology)" class="px-4 py-3 rounded-xl bg-white/20 border border-white/30 placeholder-white/70 text-white focus:outline-none focus:ring-2 focus:ring-white">
+                    <input type="date" class="px-4 py-3 rounded-xl bg-white/20 border border-white/30 text-white focus:outline-none focus:ring-2 focus:ring-white">
+                </div>
+                <button onclick="generateSchedule()" class="w-full py-4 bg-white text-indigo-600 rounded-xl font-bold text-lg hover:shadow-2xl transform hover:scale-105 transition-all">
+                    Generate My Study Plan
+                </button>
+                
+                <div id="scheduleResult" class="mt-6 hidden text-left bg-white/10 rounded-xl p-6 border border-white/20">
+                    <!-- Schedule will appear here -->
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-gray-300 py-12 border-t border-gray-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid md:grid-cols-4 gap-8 mb-8">
+                <div>
+                    <div class="flex items-center space-x-2 mb-4">
+                        <div class="w-8 h-8 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center text-white font-bold">L</div>
+                        <span class="brand-font text-xl font-bold text-white">LearnSmart AI</span>
+                    </div>
+                    <p class="text-sm text-gray-400">Empowering high school students with free, AI-curated learning resources.</p>
+                </div>
+                <div>
+                    <h4 class="text-white font-semibold mb-4">Subjects</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="#" class="hover:text-white transition-colors">Mathematics</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Science</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Literature</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">History</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-white font-semibold mb-4">Resources</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="#" class="hover:text-white transition-colors">Textbooks</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Video Courses</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Practice Tests</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Study Guides</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-white font-semibold mb-4">Connect</h4>
+                    <div class="flex space-x-4">
+                        <a href="#" class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center hover:bg-indigo-600 transition-colors">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"/></svg>
+                        </a>
+                        <a href="#" class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center hover:bg-indigo-600 transition-colors">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-gray-800 pt-8 text-center text-sm text-gray-500">
+                <p>&copy; 2026 LearnSmart AI. All resources are free and open-access.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Comprehensive Resource Database
+        const resources = [
+            // Mathematics
+            {
+                id: 1,
+                title: "Khan Academy - Algebra 1 & 2",
+                type: "video",
+                subject: "mathematics",
+                grade: ["9-10", "11-12"],
+                style: ["visual", "interactive"],
+                difficulty: "easy",
+                rating: 5,
+                description: "Comprehensive video lessons covering all algebra topics with interactive practice problems.",
+                url: "https://www.khanacademy.org/math/algebra",
+                image: "📐",
+                free: true,
+                tags: ["Algebra", "Video Lessons", "Practice"]
+            },
+            {
+                id: 2,
+                title: "OpenStax - Calculus Volume 1",
+                type: "textbook",
+                subject: "mathematics",
+                grade: ["11-12"],
+                style: ["reading"],
+                difficulty: "hard",
+                rating: 5,
+                description: "Peer-reviewed, openly licensed calculus textbook from Rice University. FREE PDF download.",
+                url: "https://openstax.org/details/books/calculus-volume-1",
+                image: "📖",
+                free: true,
+                tags: ["Calculus", "Textbook", "College Prep"]
+            },
+            {
+                id: 3,
+                title: "Desmos Graphing Calculator",
+                type: "interactive",
+                subject: "mathematics",
+                grade: ["9-10", "11-12"],
+                style: ["interactive", "visual"],
+                difficulty: "easy",
+                rating: 5,
+                description: "Free online graphing calculator with interactive sliders, tables, and geometry tools.",
+                url: "https://www.desmos.com/calculator",
+                image: "📊",
+                free: true,
+                tags: ["Graphing", "Calculator", "Visualization"]
+            },
+            {
+                id: 4,
+                title: "Paul's Online Math Notes",
+                type: "notes",
+                subject: "mathematics",
+                grade: ["11-12"],
+                style: ["reading"],
+                difficulty: "hard",
+                rating: 5,
+                description: "Detailed lecture notes and practice problems for Calculus, Algebra, and Differential Equations.",
+                url: "https://tutorial.math.lamar.edu/",
+                image: "📝",
+                free: true,
+                tags: ["Notes", "Calculus", "Practice Problems"]
+            },
+            {
+                id: 5,
+                title: "Brilliant - Mathematical Fundamentals",
+                type: "interactive",
+                subject: "mathematics",
+                grade: ["9-10", "11-12"],
+                style: ["interactive"],
+                difficulty: "medium",
+                rating: 4,
+                description: "Interactive problem-solving courses that build mathematical intuition through discovery.",
+                url: "https://brilliant.org/courses/mathematical-fundamentals/",
+                image: "🧮",
+                free: true,
+                tags: ["Problem Solving", "Interactive", "Logic"]
+            },
+
+            // Science
+            {
+                id: 6,
+                title: "Khan Academy - High School Biology",
+                type: "video",
+                subject: "science",
+                grade: ["9-10"],
+                style: ["visual", "interactive"],
+                difficulty: "medium",
+                rating: 5,
+                description: "Complete biology curriculum covering cells, genetics, evolution, and ecology.",
+                url: "https://www.khanacademy.org/science/biology",
+                image: "🧬",
+                free: true,
+                tags: ["Biology", "NGSS", "Video"]
+            },
+            {
+                id: 7,
+                title: "OpenStax - Biology 2e",
+                type: "textbook",
+                subject: "science",
+                grade: ["9-10", "11-12"],
+                style: ["reading"],
+                difficulty: "medium",
+                rating: 5,
+                description: "Comprehensive college-level biology textbook, perfect for AP Biology prep.",
+                url: "https://openstax.org/details/books/biology-2e",
+                image: "🔬",
+                free: true,
+                tags: ["Biology", "AP Prep", "Textbook"]
+            },
+            {
+                id: 8,
+                title: "PhET Interactive Simulations",
+                type: "interactive",
+                subject: "science",
+                grade: ["9-10", "11-12"],
+                style: ["interactive", "visual"],
+                difficulty: "easy",
+                rating: 5,
+                description: "Free interactive math and science simulations from University of Colorado Boulder.",
+                url: "https://phet.colorado.edu/",
+                image: "⚛️",
+                free: true,
+                tags: ["Physics", "Chemistry", "Simulations"]
+            },
+            {
+                id: 9,
+                title: "Crash Course Chemistry",
+                type: "video",
+                subject: "science",
+                grade: ["9-10", "11-12"],
+                style: ["visual", "auditory"],
+                difficulty: "medium",
+                rating: 5,
+                description: "Fast-paced, engaging video series covering all high school chemistry topics.",
+                url: "https://www.youtube.com/crashcourse",
+                image: "⚗️",
+                free: true,
+                tags: ["Chemistry", "YouTube", "Entertaining"]
+            },
+            {
+                id: 10,
+                title: "MIT OpenCourseWare - Physics",
+                type: "video",
+                subject: "science",
+                grade: ["11-12"],
+                style: ["visual", "reading"],
+                difficulty: "hard",
+                rating: 5,
+                description: "Actual MIT physics lectures, assignments, and exams. College-level preparation.",
+                url: "https://ocw.mit.edu/courses/physics/",
+                image: "🎓",
+                free: true,
+                tags: ["Physics", "College Level", "Lectures"]
+            },
+
+            // Humanities
+            {
+                id: 11,
+                title: "Project Gutenberg",
+                type: "textbook",
+                subject: "humanities",
+                grade: ["9-10", "11-12"],
+                style: ["reading"],
+                difficulty: "medium",
+                rating: 5,
+                description: "Over 60,000 free eBooks including all classics assigned in high school English.",
+                url: "https://www.gutenberg.org/",
+                image: "📚",
+                free: true,
+                tags: ["Literature", "Classics", "Reading"]
+            },
+            {
+                id: 12,
+                title: "Khan Academy - US Government",
+                type: "video",
+                subject: "humanities",
+                grade: ["9-10", "11-12"],
+                style: ["visual"],
+                difficulty: "medium",
+                rating: 5,
+                description: "Comprehensive civics course covering Constitution, civil rights, and political systems.",
+                url: "https://www.khanacademy.org/humanities/us-government-and-civics",
+                image: "🏛️",
+                free: true,
+                tags: ["Civics", "Government", "AP Gov"]
+            },
+            {
+                id: 13,
+                title: "TED-Ed Lessons",
+                type: "video",
+                subject: "humanities",
+                grade: ["9-10", "11-12"],
+                style: ["visual", "auditory"],
+                difficulty: "easy",
+                rating: 4,
+                description: "Short animated lessons on history, literature, and philosophy with quizzes.",
+                url: "https://ed.ted.com/",
+                image: "🎭",
+                free: true,
+                tags: ["History", "Animation", "Short Lessons"]
+            },
+            {
+                id: 14,
+                title: "Library of Congress Digital Collections",
+                type: "interactive",
+                subject: "humanities",
+                grade: ["11-12"],
+                style: ["reading", "visual"],
+                difficulty: "medium",
+                rating: 5,
+                description: "Primary source documents, photographs, and recordings from American history.",
+                url: "https://www.loc.gov/collections/",
+                image: "🏺",
+                free: true,
+                tags: ["Primary Sources", "History", "Research"]
+            },
+
+            // Languages
+            {
+                id: 15,
+                title: "Duolingo",
+                type: "interactive",
+                subject: "languages",
+                grade: ["9-10", "11-12"],
+                style: ["interactive", "visual"],
+                difficulty: "easy",
+                rating: 4,
+                description: "Gamified language learning for Spanish, French, German, and 30+ languages.",
+                url: "https://www.duolingo.com/",
+                image: "🦉",
+                free: true,
+                tags: ["Spanish", "French", "Gamification"]
+            },
+            {
+                id: 16,
+                title: "Memrise",
+                type: "interactive",
+                subject: "languages",
+                grade: ["9-10", "11-12"],
+                style: ["interactive", "auditory"],
+                difficulty: "medium",
+                rating: 4,
+                description: "Language learning with real-life content and native speaker videos.",
+                url: "https://www.memrise.com/",
+                image: "🗣️",
+                free: true,
+                tags: ["Conversation", "Pronunciation", "Real Life"]
+            },
+
+            // Computer Science
+            {
+                id: 17,
+                title: "freeCodeCamp",
+                type: "interactive",
+                subject: "coding",
+                grade: ["9-10", "11-12"],
+                style: ["interactive", "hands-on"],
+                difficulty: "medium",
+                rating: 5,
+                description: "Learn to code for free with certifications in web development, Python, and more.",
+                url: "https://www.freecodecamp.org/",
+                image: "💻",
+                free: true,
+                tags: ["Web Development", "Python", "Certification"]
+            },
+            {
+                id: 18,
+                title: "Codecademy - Free Tier",
+                type: "interactive",
+                subject: "coding",
+                grade: ["9-10", "11-12"],
+                style: ["interactive"],
+                difficulty: "easy",
+                rating: 4,
+                description: "Interactive coding lessons in Python, JavaScript, HTML/CSS, and more.",
+                url: "https://www.codecademy.com/",
+                image: "⌨️",
+                free: true,
+                tags: ["Python", "JavaScript", "Beginner"]
+            },
+            {
+                id: 19,
+                title: "CS50 by Harvard",
+                type: "video",
+                subject: "coding",
+                grade: ["11-12"],
+                style: ["visual", "auditory"],
+                difficulty: "hard",
+                rating: 5,
+                description: "Harvard's introduction to computer science. The gold standard for CS education.",
+                url: "https://cs50.harvard.edu/x/",
+                image: "🎓",
+                free: true,
+                tags: ["Harvard", "Computer Science", "College Level"]
+            },
+            {
+                id: 20,
+                title: "Scratch MIT",
+                type: "interactive",
+                subject: "coding",
+                grade: ["9-10"],
+                style: ["interactive", "visual"],
+                difficulty: "easy",
+                rating: 5,
+                description: "Block-based visual programming perfect for beginners and creative projects.",
+                url: "https://scratch.mit.edu/",
+                image: "🎨",
+                free: true,
+                tags: ["Beginner", "Creative", "Block Coding"]
+            },
+
+            // Test Prep
+            {
+                id: 21,
+                title: "Khan Academy - SAT Prep",
+                type: "interactive",
+                subject: "test-prep",
+                grade: ["11-12"],
+                style: ["interactive", "visual"],
+                difficulty: "medium",
+                rating: 5,
+                description: "Official SAT practice with personalized recommendations and full practice tests.",
+                url: "https://www.khanacademy.org/sat",
+                image: "✅",
+                free: true,
+                tags: ["SAT", "College Board", "Practice Tests"]
+            },
+            {
+                id: 22,
+                title: "Quizlet",
+                type: "interactive",
+                subject: "test-prep",
+                grade: ["9-10", "11-12"],
+                style: ["interactive", "visual"],
+                difficulty: "easy",
+                rating: 4,
+                description: "Flashcards and study games for vocabulary, formulas, and key concepts.",
+                url: "https://quizlet.com/",
+                image: "🎴",
+                free: true,
+                tags: ["Flashcards", "Memorization", "Games"]
+            },
+
+            // Life Skills
+            {
+                id: 23,
+                title: "Khan Academy - Personal Finance",
+                type: "video",
+                subject: "life-skills",
+                grade: ["9-10", "11-12"],
+                style: ["visual"],
+                difficulty: "easy",
+                rating: 5,
+                description: "Essential money management skills: taxes, saving, investing, and credit.",
+                url: "https://www.khanacademy.org/college-careers-more/personal-finance",
+                image: "💰",
+                free: true,
+                tags: ["Finance", "Money", "Essential Skills"]
+            },
+            {
+                id: 24,
+                title: "Everfi Financial Literacy",
+                type: "interactive",
+                subject: "life-skills",
+                grade: ["9-10", "11-12"],
+                style: ["interactive"],
+                difficulty: "easy",
+                rating: 4,
+                description: "Interactive courses on financial education, mental health, and career planning.",
+                url: "https://everfi.com/",
+                image: "🏦",
+                free: true,
+                tags: ["Financial Literacy", "Career", "Wellness"]
+            }
+        ];
+
+        // State Management
+        let currentFilters = {
+            subject: null,
+            type: 'all',
+            grade: null,
+            style: null,
+            search: ''
+        };
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            renderResources(resources);
+            initAnimations();
+        });
+
+        // Render Resources
+        function renderResources(data) {
+            const grid = document.getElementById('resourcesGrid');
+            grid.innerHTML = '';
+
+            if (data.length === 0) {
+                grid.innerHTML = `
+                    <div class="col-span-full text-center py-12">
+                        <div class="text-6xl mb-4">🔍</div>
+                        <h3 class="text-xl font-semibold text-gray-600 dark:text-gray-400">No resources found</h3>
+                        <p class="text-gray-500">Try adjusting your filters or search terms</p>
+                    </div>
+                `;
+                return;
+            }
+
+            data.forEach((resource, index) => {
+                const card = document.createElement('div');
+                card.className = `resource-card rounded-2xl p-6 card-hover flex flex-col h-full opacity-0 transform translate-y-4`;
+                card.style.animation = `fadeInUp 0.5s ease forwards ${index * 0.1}s`;
+                
+                const difficultyColor = resource.difficulty === 'easy' ? 'difficulty-easy' : 
+                                       resource.difficulty === 'medium' ? 'difficulty-medium' : 'difficulty-hard';
+                
+                const stars = '★'.repeat(resource.rating) + '☆'.repeat(5 - resource.rating);
+                
+                card.innerHTML = `
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="text-4xl">${resource.image}</div>
+                        <div class="flex flex-col items-end">
+                            <span class="text-xs font-semibold px-2 py-1 rounded-full bg-gray-100 dark:bg-gray-700 ${difficultyColor} capitalize">
+                                ${resource.difficulty}
+                            </span>
+                            <span class="star-rating text-sm mt-1">${stars}</span>
+                        </div>
+                    </div>
+                    
+                    <h3 class="text-xl font-bold mb-2 line-clamp-2">${resource.title}</h3>
+                    <p class="text-gray-600 dark:text-gray-400 text-sm mb-4 flex-grow line-clamp-3">${resource.description}</p>
+                    
+                    <div class="flex flex-wrap gap-2 mb-4">
+                        ${resource.tags.map(tag => `<span class="text-xs px-2 py-1 rounded-md bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400">${tag}</span>`).join('')}
+                    </div>
+                    
+                    <div class="flex items-center justify-between pt-4 border-t border-gray-200 dark:border-gray-700">
+                        <div class="flex items-center gap-2 text-sm text-gray-500">
+                            <span class="capitalize">${resource.type}</span>
+                            <span>•</span>
+                            <span class="capitalize">${resource.subject}</span>
+                        </div>
+                        <a href="${resource.url}" target="_blank" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-sm font-semibold transition-colors flex items-center gap-1 group">
+                            Access
+                            <svg class="w-4 h-4 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                        </a>
+                    </div>
+                `;
+                
+                grid.appendChild(card);
+            });
+        }
+
+        // Filter Functions
+        function filterBySubject(subject) {
+            currentFilters.subject = currentFilters.subject === subject ? null : subject;
+            updateActiveFilters();
+            applyFilters();
+            
+            // Update UI
+            document.querySelectorAll('.subject-btn').forEach(btn => {
+                if (btn.dataset.subject === subject && currentFilters.subject) {
+                    btn.classList.add('ring-4', 'ring-indigo-500', 'dark:ring-indigo-400');
+                } else {
+                    btn.classList.remove('ring-4', 'ring-indigo-500', 'dark:ring-indigo-400');
+                }
+            });
+        }
+
+        function filterByType(type) {
+            currentFilters.type = type;
+            updateActiveFilters();
+            applyFilters();
+            
+            // Update UI
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                if (btn.dataset.filter === type) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+        }
+
+        function selectGrade(grade) {
+            currentFilters.grade = currentFilters.grade === grade ? null : grade;
+            updateActiveFilters();
+            applyFilters();
+            
+            // Update UI
+            ['9-10', '11-12', 'test-prep'].forEach(g => {
+                const el = document.getElementById(`grade-${g === 'test-prep' ? 'test' : g}`);
+                if (g === currentFilters.grade) {
+                    el.classList.add('border-indigo-500', 'bg-indigo-50', 'dark:bg-indigo-900/20');
+                } else {
+                    el.classList.remove('border-indigo-500', 'bg-indigo-50', 'dark:bg-indigo-900/20');
+                }
+            });
+        }
+
+        function filterByStyle(style) {
+            currentFilters.style = currentFilters.style === style ? null : style;
+            updateActiveFilters();
+            applyFilters();
+            
+            // Update UI
+            ['visual', 'reading', 'interactive', 'auditory'].forEach(s => {
+                const el = document.getElementById(`style-${s}`);
+                if (s === currentFilters.style) {
+                    el.classList.add('ring-2', 'ring-indigo-500', 'bg-indigo-50', 'dark:bg-indigo-900/30');
+                } else {
+                    el.classList.remove('ring-2', 'ring-indigo-500', 'bg-indigo-50', 'dark:bg-indigo-900/30');
+                }
+            });
+        }
+
+        function handleSearch(event) {
+            if (event.key === 'Enter') {
+                performSearch();
+            } else {
+                currentFilters.search = event.target.value.toLowerCase();
+                // Debounce for typing
+                clearTimeout(window.searchTimeout);
+                window.searchTimeout = setTimeout(applyFilters, 300);
+            }
+        }
+
+        function performSearch() {
+            const searchInput = document.getElementById('mainSearch');
+            currentFilters.search = searchInput.value.toLowerCase();
+            
+            // Scroll to resources
+            document.getElementById('resources').scrollIntoView({ behavior: 'smooth' });
+            applyFilters();
+        }
+
+        function applyFilters() {
+            let filtered = resources.filter(resource => {
+                // Subject filter
+                if (currentFilters.subject && resource.subject !== currentFilters.subject) return false;
+                
+                // Type filter
+                if (currentFilters.type !== 'all' && resource.type !== currentFilters.type) return false;
+                
+                // Grade filter
+                if (currentFilters.grade && !resource.grade.includes(currentFilters.grade)) return false;
+                
+                // Style filter
+                if (currentFilters.style && !resource.style.includes(currentFilters.style)) return false;
+                
+                // Search filter
+                if (currentFilters.search) {
+                    const searchLower = currentFilters.search;
+                    const matchTitle = resource.title.toLowerCase().includes(searchLower);
+                    const matchDesc = resource.description.toLowerCase().includes(searchLower);
+                    const matchTags = resource.tags.some(tag => tag.toLowerCase().includes(searchLower));
+                    const matchSubject = resource.subject.toLowerCase().includes(searchLower);
+                    
+                    if (!matchTitle && !matchDesc && !matchTags && !matchSubject) return false;
+                }
+                
+                return true;
+            });
+            
+            renderResources(filtered);
+        }
+
+        function updateActiveFilters() {
+            const container = document.getElementById('activeFilters');
+            const filters = [];
+            
+            if (currentFilters.subject) filters.push(`Subject: ${currentFilters.subject}`);
+            if (currentFilters.type !== 'all') filters.push(`Type: ${currentFilters.type}`);
+            if (currentFilters.grade) filters.push(`Grade: ${currentFilters.grade}`);
+            if (currentFilters.style) filters.push(`Style: ${currentFilters.style}`);
+            if (currentFilters.search) filters.push(`Search: "${currentFilters.search}"`);
+            
+            if (filters.length > 0) {
+                container.classList.remove('hidden');
+                container.innerHTML = '<span class="text-sm text-gray-500 mr-2">Active filters:</span>' + 
+                    filters.map(f => `<span class="px-3 py-1 rounded-full bg-indigo-100 dark:bg-indigo-900/50 text-indigo-700 dark:text-indigo-300 text-sm font-medium flex items-center gap-2">${f}<button onclick="clearFilter('${f.split(':')[0].toLowerCase()}')" class="hover:text-red-500">×</button></span>`).join('');
+            } else {
+                container.classList.add('hidden');
+            }
+        }
+
+        function clearFilter(filterType) {
+            switch(filterType) {
+                case 'subject': currentFilters.subject = null; break;
+                case 'type': currentFilters.type = 'all'; break;
+                case 'grade': currentFilters.grade = null; break;
+                case 'style': currentFilters.style = null; break;
+                case 'search': currentFilters.search = ''; document.getElementById('mainSearch').value = ''; break;
+            }
+            updateActiveFilters();
+            applyFilters();
+            
+            // Reset UI states
+            if (filterType === 'subject') {
+                document.querySelectorAll('.subject-btn').forEach(btn => btn.classList.remove('ring-4', 'ring-indigo-500'));
+            }
+            if (filterType === 'grade') {
+                ['9-10', '11-12', 'test-prep'].forEach(g => {
+                    document.getElementById(`grade-${g === 'test-prep' ? 'test' : g}`).classList.remove('border-indigo-500', 'bg-indigo-50', 'dark:bg-indigo-900/20');
+                });
+            }
+        }
+
+        // Study Schedule Generator
+        function generateSchedule() {
+            const result = document.getElementById('scheduleResult');
+            result.classList.remove('hidden');
+            
+            // Mock AI-generated schedule
+            const subjects = ['AP Biology', 'Calculus', 'English Literature', 'US History'];
+            const schedule = subjects.map((subj, i) => ({
+                subject: subj,
+                time: `${i + 1}:00 PM - ${i + 2}:00 PM`,
+                activity: i % 2 === 0 ? 'Video Lessons + Notes' : 'Practice Problems + Review',
+                resource: i % 2 === 0 ? 'Khan Academy' : 'OpenStax + Practice Tests'
+            }));
+            
+            result.innerHTML = `
+                <h3 class="text-xl font-bold mb-4 flex items-center gap-2">
+                    <span class="text-2xl">🤖</span> Your AI-Generated Study Plan
+                </h3>
+                <div class="space-y-4">
+                    ${schedule.map((item, i) => `
+                        <div class="flex items-center gap-4 p-4 bg-white/10 rounded-xl border border-white/20">
+                            <div class="w-12 h-12 rounded-full bg-white/20 flex items-center justify-center font-bold">${i + 1}</div>
+                            <div class="flex-1">
+                                <div class="font-semibold text-lg">${item.subject}</div>
+                                <div class="text-sm opacity-80">${item.time}</div>
+                                <div class="text-sm mt-1">${item.activity}</div>
+                            </div>
+                            <div class="text-xs px-3 py-1 rounded-full bg-white/20">${item.resource}</div>
+                        </div>
+                    `).join('')}
+                </div>
+                <div class="mt-6 p-4 bg-yellow-500/20 rounded-xl border border-yellow-500/30">
+                    <div class="flex items-start gap-2">
+                        <span class="text-xl">💡</span>
+                        <div>
+                            <div class="font-semibold">AI Recommendation</div>
+                            <div class="text-sm opacity-90">Based on your exam dates, I recommend starting with Biology (most content-heavy) and alternating between active recall (practice tests) and passive learning (videos) every hour to maximize retention.</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Theme Toggle
+        function toggleTheme() {
+            document.documentElement.classList.toggle('dark');
+            localStorage.setItem('theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
+        }
+
+        // Initialize theme
+        if (localStorage.getItem('theme') === 'dark' || (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        }
+
+        // Animations
+        function initAnimations() {
+            gsap.registerPlugin(ScrollTrigger);
+            
+            // Animate cards on scroll
+            gsap.utils.toArray('.resource-card').forEach((card, i) => {
+                gsap.from(card, {
+                    scrollTrigger: {
+                        trigger: card,
+                        start: 'top 85%',
+                    },
+                    y: 50,
+                    opacity: 0,
+                    duration: 0.6,
+                    delay: i * 0.1,
+                    ease: 'power2.out'
+                });
+            });
+        }
+
+        function loadMore() {
+            // Simulate loading more resources
+            const btn = event.target;
+            btn.innerHTML = 'Loading...';
+            setTimeout(() => {
+                btn.innerHTML = 'Load More Resources';
+                // In a real app, this would fetch more data
+                alert('In the full version, this would load additional resources from the database!');
+            }, 1000);
+        }
+
+        // Add custom styles for animations
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes fadeInUp {
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>
